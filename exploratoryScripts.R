@@ -126,6 +126,9 @@ mh<-sqldf("select *
       where HomeTeam='Chelsea' and AwayTeam='Arsenal' ")
 
 matchHistory<-table(mh$FTR)
+matchHistory
+
+mh
 #matchHistory<-as.data.frame(table(mh$FTR))
 
 #homegoals vs away goals

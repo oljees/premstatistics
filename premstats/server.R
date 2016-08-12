@@ -10,9 +10,23 @@ library(sqldf)
 
 
 #download and prepare data
-setwd("D:\\Jorgen\\Documents\\Coursera\\courses-master\\09_DevelopingDataProducts\\assignment_je")
+#setwd("D:\\Jorgen\\Documents\\Coursera\\courses-master\\09_DevelopingDataProducts\\assignment_je")
 seasons<-c("1516","1415","1314","1213","1112","1011","0910","0809","0708","0607","0506",
            "0405","0304","0203","0102","0001","9900","9899","9798","9697","9596","9495","9394")
+
+#download all seasons - "http://www.football-data.co.uk/mmz4281/1516/E0.csv" is 1516
+if (!file.exists("data")){
+  dir.create("data")
+}
+
+for (yr in seasons) {
+  download.file(paste("http://www.football-data.co.uk/mmz4281/",yr,"/E0.csv",sep=""),
+                destfile=paste("./data/",yr,".csv",sep=""))
+}
+
+dateDownloaded <- today()
+dateDownloaded
+
 alldata<-data.frame()
 for(yr in seasons) {
   #d<-read.csv(paste("D:/Jorgen/Documents/Coursera/courses-master/09_DevelopingDataProducts/assignment_je/data/",yr,".csv",sep=""))
@@ -24,16 +38,19 @@ for(yr in seasons) {
 
 
 #process
-alldata$Date <- as.Date( 
-  alldata$Date, 
-  format = ifelse( 
-    nchar(as.character(alldata$Date))>8, 
-    "%d/%m/%Y", 
-    "%d/%m/%y" 
-  ) 
-)
+# alldata$Date <- as.Date( 
+#   alldata$Date, 
+#   format = ifelse( 
+#     nchar(as.character(alldata$Date))>8, 
+#     "%d/%m/%Y", 
+#     "%d/%m/%y" 
+#   ) 
+# )
+
 alldata<-sqldf("select * from alldata where date is not null")
 alldata$FTR<-factor(alldata$FTR, levels=c("H","D","A"))
+
+#alldata$Date<-as_date(alldata$Date)
 #complete league table
 homewin<-sqldf("select hometeam as team, count(FTR) as hWins
                from alldata
@@ -201,6 +218,12 @@ shinyServer(function(input, output) {
   output$summary <- renderPrint({
     dataset <- filter(alldata,HomeTeam==HomeTeam() & AwayTeam==AwayTeam())
     table(dataset$FTR)
+  })
+
+  
+    output$mh <- renderTable({
+    historyd<- filter(alldata,HomeTeam==HomeTeam() & AwayTeam==AwayTeam())
+    historyd
   })
   
   # The output$view depends on both the databaseInput reactive
