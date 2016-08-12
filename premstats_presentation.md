@@ -70,4 +70,4 @@ This app can be useful to check history of fixtures for any predictions leagues 
 
 _Originally produced by J.Engmann as Coursework for Coursera Developing Data Products August 2016_
 
-_Full code is available on github_
+_Full code is available on github_  <https://github.com/oljees/premstatistics/tree/master/premstats>
